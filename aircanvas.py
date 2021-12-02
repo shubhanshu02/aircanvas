@@ -3,12 +3,13 @@
 import numpy as np
 import cv2
 from collections import deque
+import HandTrackingModule as htm
 
 
 # default called trackbar function
 
 def setValues(x):
-    print ''
+    print('')
 
 
 # Creating the trackbars needed for
@@ -67,6 +68,10 @@ cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
 # Loading the default webcam of PC.
 
 cap = cv2.VideoCapture(0)
+detector = htm.handDetector(detectionCon=0.75)
+
+def checkIndexFinger(lmList):
+    return lmList[8][2] < lmList[8 - 2][2]
 
 # Keep looping
 
@@ -75,7 +80,8 @@ while True:
     # Reading the frame from the camera
 
     (ret, frame) = cap.read()
-
+    img = detector.findHands(frame)
+    lmList = detector.findPosition(img, draw=False)
     # Flipping the frame to see same side of yours
 
     frame = cv2.flip(frame, 1)
@@ -177,26 +183,24 @@ while True:
 
     # Ifthe contours are formed
 
-    if len(cnts) > 0:
-
-        # sorting the contours to find biggest
-
+    if len(lmList) != 0 and checkIndexFinger(lmList):
         cnt = sorted(cnts, key=cv2.contourArea, reverse=True)[0]
 
         # Get the radius of the enclosing circle
         # around the found contour
-
         ((x, y), radius) = cv2.minEnclosingCircle(cnt)
 
+        x = 640 - lmList[8][1]
+        y = lmList[8][2]
+        #print(x,y)
         # Draw the circle around the contour
 
-        cv2.circle(frame, (int(x), int(y)), int(radius), (0, 0xFF,
-                   0xFF), 2)
+        cv2.circle(frame, (x,y), int(20), (0, 0xFF, 0xFF), 2)
 
         # Calculating the center of the detected contour
 
         M = cv2.moments(cnt)
-        center = (int(M['m10'] / M['m00']), int(M['m01'] / M['m00']))
+        center = (x, y)
 
         # Now checking if the user wants to click on
         # any button above the screen
