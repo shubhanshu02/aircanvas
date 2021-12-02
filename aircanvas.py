@@ -166,30 +166,12 @@ while True:
         cv2.LINE_AA,
         )
 
-    # Identifying the pointer by making its
-    # mask
-
-    Mask = cv2.inRange(hsv, Lower_hsv, Upper_hsv)
-    Mask = cv2.erode(Mask, kernel, iterations=1)
-    Mask = cv2.morphologyEx(Mask, cv2.MORPH_OPEN, kernel)
-    Mask = cv2.dilate(Mask, kernel, iterations=1)
-
-    # Find contours for the pointer after
-    # idetifying it
-
-    (cnts, _) = cv2.findContours(Mask.copy(), cv2.RETR_EXTERNAL,
-                                 cv2.CHAIN_APPROX_SIMPLE)
     center = None
-
     # Ifthe contours are formed
 
     if len(lmList) != 0 and checkIndexFinger(lmList):
-        cnt = sorted(cnts, key=cv2.contourArea, reverse=True)[0]
-
         # Get the radius of the enclosing circle
         # around the found contour
-        ((x, y), radius) = cv2.minEnclosingCircle(cnt)
-
         x = 640 - lmList[8][1]
         y = lmList[8][2]
         #print(x,y)
@@ -198,8 +180,6 @@ while True:
         cv2.circle(frame, (x,y), int(20), (0, 0xFF, 0xFF), 2)
 
         # Calculating the center of the detected contour
-
-        M = cv2.moments(cnt)
         center = (x, y)
 
         # Now checking if the user wants to click on
@@ -275,7 +255,7 @@ while True:
 
     cv2.imshow('Tracking', frame)
     cv2.imshow('Paint', paintWindow)
-    cv2.imshow('mask', Mask)
+    # cv2.imshow('mask', Mask)
 
     # If the 'q' key is pressed then stop the application
 
