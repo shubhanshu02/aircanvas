@@ -54,7 +54,7 @@ class CharacterDetector:
         train_x = np.reshape(train_x.values, (train_x.shape[0], 28, 28))
         test_x = np.reshape(test_x.values, (test_x.shape[0], 28, 28))
 
-        # Reshaping the data in csv file so that it can be displayed as an image...
+        # Reshaping the data in csv file so that it can be displayed as an img...
         print("Train data shape: ", train_x.shape)
         print("Test data shape: ", test_x.shape)
 
@@ -172,7 +172,7 @@ class CharacterDetector:
         pred = self.model.predict(self.testX[:9])
         print(self.testX.shape)
 
-        # Displaying some of the test images & their predicted labels...
+        # Displaying some of the test imgs & their predicted labels...
         fig, axes = plt.subplots(3, 3, figsize=(8, 9))
         axes = axes.flatten()
 
@@ -183,10 +183,10 @@ class CharacterDetector:
             ax.set_title("Prediction: " + pred)
             ax.grid()
 
-    def predict(self, image):
-        if type(image) == str:
-            # Prediction on external image...
-            img = cv2.imread(image)
+    def predict(self, img):
+        if type(img) == str:
+            # Prediction on external img...
+            img = cv2.imread(img)
 
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (400, 440))
