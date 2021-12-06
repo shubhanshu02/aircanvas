@@ -147,7 +147,7 @@ while True:
                 red_index = 0
                 voilet_index = 0
 
-                paintWindow[67:, :, :] = 0xFF
+                paintWindow[:, :, :] = 0xFF
             elif 120 <= center[1] <= 160:
                 colorIndex = 0  # Black
             elif 170 <= center[1] <= 210:
