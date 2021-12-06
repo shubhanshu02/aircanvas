@@ -56,7 +56,7 @@ cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
 
 cap = cv2.VideoCapture(0)
 detector = htm.handDetector(detectionCon=0.75)
-
+det = CharacterDetector(loadFile="model_hand.h5")
 # Keep looping
 
 while True:
@@ -160,10 +160,9 @@ while True:
             #img_final =np.reshape(make_square(paintWindow), (1,28,28,1))
             #img_pred = word_dict[np.argmax(model.predict(img_final))]
             #print(img_pred)
-            det = CharacterDetector(loadFile="model_hand.h5")
             cv2.imwrite("new.jpg",paintWindow)
             #im = cv2.imread("new.jpg")
-            det.predict("new.jpg")
+            print(det.predict("new.jpg"))
 
         else:
             if colorIndex == 0:
