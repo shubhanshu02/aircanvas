@@ -12,8 +12,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import SGD, Adam
 from tensorflow.keras.utils import to_categorical
 
-physical_devices = tf.config.list_physical_devices("GPU")
-tf.config.experimental.set_memory_growth(physical_devices[0], True)
+#physical_devices = tf.config.list_physical_devices("GPU")
+#tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 
 class CharacterDetector:
@@ -188,13 +188,17 @@ class CharacterDetector:
             # Prediction on external img...
             img = cv2.imread(img)
 
+        img_copy = img.copy()
+        #print(img.shape)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (400, 440))
 
-        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        img_copy = cv2.GaussianBlur(img_copy, (7,7), 0)
+        img_gray = cv2.cvtColor(img_copy, cv2.COLOR_BGR2GRAY)
         _, img_thresh = cv2.threshold(img_gray, 100, 255, cv2.THRESH_BINARY_INV)
 
         img_final = cv2.resize(img_thresh, (28, 28))
+        cv2.imshow("Recognised", img_final)
         img_final = np.reshape(img_final, (1, 28, 28, 1))
 
         img_pred = self.word_dict[np.argmax(self.model.predict(img_final))]

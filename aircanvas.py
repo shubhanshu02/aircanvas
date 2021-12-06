@@ -2,21 +2,24 @@ import numpy as np
 import cv2
 from collections import deque
 import HandTrackingModule as htm
-
-
+from detection import CharacterDetector
+from tensorflow import keras
 
 # default called trackbar function
 
 def setValues(x):
     print('')
 
+#word_dict = {0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G',7:'H',8:'I',9:'J',10:'K',11:'L',12:'M',13:'N',14:'O',15:'P',16:'Q',17:'R',18:'S',19:'T',20:'U',21:'V',22:'W',23:'X', 24:'Y',25:'Z'}
+
+
+#model = keras.models.load_model('model.h5')
 
 # Giving different arrays to handle colour
 # points of different colour These arrays
 # will hold the points of a particular colour
 # in the array which will further be used
 # to draw on canvas
-
 tipIds = [4, 8, 12, 16, 20]
 
 bpoints = [deque(maxlen=1024)]
@@ -96,6 +99,7 @@ while True:
     frame = cv2.circle(frame,(40,190),20,(255,0,0),-1)
     frame = cv2.circle(frame,(40,240), 20, (0,255,0),-1)
     frame = cv2.circle(frame,(40,290), 20, (0,0,255),-1)
+    frame = cv2.rectangle(frame, (520,1), (630,65), (0,0,0), -1)
 
     cv2.putText(
         frame,
@@ -107,6 +111,7 @@ while True:
         2,
         cv2.LINE_AA,
     )
+    cv2.putText(frame, "Recognise", (530, 33), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (150,150,150), 2, cv2.LINE_AA)
 
     center = None
     # Ifthe contours are formed
@@ -114,8 +119,6 @@ while True:
     if len(lmList) != 0 and totalFingers==1:
         # Get the radius of the enclosing circle
         # around the found contour
-        #x = 640 - lmList[8][1]
-        #y = lmList[8][2]
         lst = lmList[tipIds[fingers.index(1)]]
         x,y = lst[1],lst[2]
         #print(x,y)
@@ -153,6 +156,15 @@ while True:
                 colorIndex = 2  # Green
             elif 270 <= center[1] <= 310:
                 colorIndex = 3  # Red
+        elif 520< center[0] < 630 and 1 < center[1] < 65:
+            #img_final =np.reshape(make_square(paintWindow), (1,28,28,1))
+            #img_pred = word_dict[np.argmax(model.predict(img_final))]
+            #print(img_pred)
+            det = CharacterDetector(loadFile="model_hand.h5")
+            cv2.imwrite("new.jpg",paintWindow)
+            #im = cv2.imread("new.jpg")
+            det.predict("new.jpg")
+
         else:
             if colorIndex == 0:
                 bpoints[black_index].appendleft(center)
