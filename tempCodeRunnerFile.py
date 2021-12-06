@@ -1,0 +1,1 @@
+frame = cv2.flip(frame, 1)

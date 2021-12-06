@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 import numpy as np
 import cv2
 from collections import deque
@@ -18,6 +16,8 @@ def setValues(x):
 # will hold the points of a particular colour
 # in the array which will further be used
 # to draw on canvas
+
+tipIds = [4, 8, 12, 16, 20]
 
 bpoints = [deque(maxlen=1024)]
 gpoints = [deque(maxlen=1024)]
@@ -54,21 +54,38 @@ cv2.namedWindow('Paint', cv2.WINDOW_AUTOSIZE)
 cap = cv2.VideoCapture(0)
 detector = htm.handDetector(detectionCon=0.75)
 
-def checkIndexFinger(lmList):
-    return lmList[8][2] < lmList[8 - 2][2]
-
 # Keep looping
 
 while True:
 
     # Reading the frame from the camera
 
-    (ret, frame) = cap.read()
+    (ret, frame) = cap.read(0)
+    frame = cv2.flip(frame, 1)
     img = detector.findHands(frame)
     lmList = detector.findPosition(img, draw=False)
+
+    fingers = []
+
+    if(len(lmList)!=0):
+        if lmList[tipIds[0]][1] < lmList[tipIds[0] - 1][1]:
+            fingers.append(1)
+        else:
+            fingers.append(0)
+
+        # 4 Fingers
+        for id in range(1, 5):
+            if lmList[tipIds[id]][2] < lmList[tipIds[id] - 2][2]:
+                fingers.append(1)
+            else:
+                fingers.append(0)
+
+        #print(lmList[4])
+        totalFingers = fingers.count(1)
+
+
     # Flipping the frame to see same side of yours
 
-    frame = cv2.flip(frame, 1)
     # hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     # Getting the updated positions of the trackbar
     # and setting the HSV values
@@ -94,11 +111,13 @@ while True:
     center = None
     # Ifthe contours are formed
 
-    if len(lmList) != 0 and checkIndexFinger(lmList):
+    if len(lmList) != 0 and totalFingers==1:
         # Get the radius of the enclosing circle
         # around the found contour
-        x = 640 - lmList[8][1]
-        y = lmList[8][2]
+        #x = 640 - lmList[8][1]
+        #y = lmList[8][2]
+        lst = lmList[tipIds[fingers.index(1)]]
+        x,y = lst[1],lst[2]
         #print(x,y)
         # Draw the circle around the contour
 
