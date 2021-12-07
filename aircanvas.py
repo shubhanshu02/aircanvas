@@ -203,9 +203,9 @@ while True:
                     continue
 
                 cv2.line(frame, points[i][j][k - 1], points[i][j][k],
-                         colors[i], 6)
+                         colors[i], 20)
                 cv2.line(paintWindow, points[i][j][k - 1],
-                         points[i][j][k], colors[i], 6)
+                         points[i][j][k], colors[i], 20)
 
     # Show all the windows
 
